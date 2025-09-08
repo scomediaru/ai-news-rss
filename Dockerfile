@@ -1,40 +1,15 @@
 FROM python:3.11-slim
 
 # Установка системных зависимостей
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    unzip \
-    curl \
-    xvfb \
-    libnss3 \
-    libnspr4 \
-    libatk-bridge2.0-0 \
-    libdrm2 \
-    libxkbcommon0 \
-    libgtk-3-0 \
-    libgbm1 \
-    libasound2 \
-    fonts-liberation \
-    fonts-dejavu-core \
-    fonts-freefont-ttf \
-    && rm -rf /var/lib/apt/lists/*
+FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
 
-# Создание рабочей директории
 WORKDIR /app
 
-# Копирование файлов зависимостей
 COPY requirements.txt .
-
-# Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Установка браузеров Playwright с обходом проблем зависимостей
-RUN playwright install chromium
-RUN playwright install-deps chromium || true
-
-# Копирование исходного кода
 COPY . .
+
 
 # Создание директорий для данных
 RUN mkdir -p /app/output /app/logs
@@ -59,3 +34,5 @@ HEALTHCHECK --interval=30m --timeout=10s --start-period=5s --retries=3 \
 
 # Команда по умолчанию
 CMD ["python", "scheduler.py"]
+
+
