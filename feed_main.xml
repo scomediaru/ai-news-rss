@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+<title>AINews RSS — Главное</title>
+<link>https://dzen.ru/news</link>
+<description>Главные новости России и мира, примеры для теста</description>
+<item>
+ <title>...</title>
+ <link>...</link>
+ <pubDate>Mon, 08 Sep 2025 15:00:00 +0300</pubDate>
+ <description>...</description>
+</item>
+<!-- Ещё <item> ... -->
+</channel>
+</rss>
