@@ -1,51 +1,24 @@
 FROM python:3.11-slim
 
 # Установка системных зависимостей
-#RUN apt-get update && apt-get install -y \
-  #  wget \
-   # gnupg \
-   # unzip \
-   # curl \
-   # xvfb \
-   # && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update && apt-get install -y \
     wget \
-    ca-certificates \
-    fonts-liberation \
-    gconf-service \
-    libappindicator1 \
-    libasound2 \
-    libatk1.0-0 \
-    libcairo5 \
-    libcups2 \
-    libfontconfig1 \
-    libgdk-pixbuf2.0-0 \
-    libgtk-3-0 \
-    libicu-dev \
-    libjpeg-dev \
-    libnspr4 \
+    gnupg \
+    unzip \
+    curl \
+    xvfb \
     libnss3 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libpng-dev \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxi6 \
-    libxrandr2 \
-    libxrender1 \
-    libxss1 \
-    libxtst6 \
-    xdg-utils \
+    libnspr4 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxkbcommon0 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
+    fonts-liberation \
+    fonts-dejavu-core \
+    fonts-freefont-ttf \
     && rm -rf /var/lib/apt/lists/*
-
-
 
 # Создание рабочей директории
 WORKDIR /app
@@ -56,15 +29,10 @@ COPY requirements.txt .
 # Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Установка браузеров Playwright
+# Установка браузеров Playwright с обходом проблем зависимостей
 RUN playwright install chromium
-#RUN playwright install chromium   
-RUN playwright install-deps chromium
+RUN playwright install-deps chromium || true
 
-#RUN apt-get update && \
-#    (playwright install-deps chromium || true) && \
-#    playwright install chromium
-    
 # Копирование исходного кода
 COPY . .
 
