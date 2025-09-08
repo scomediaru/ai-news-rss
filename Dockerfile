@@ -1,15 +1,64 @@
-FROM python:3.11-slim
+# Альтернативный Dockerfile на базе Ubuntu для решения проблем с зависимостями
+FROM ubuntu:22.04
 
-# Установка системных зависимостей
-FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+# Переменные окружения для неинтерактивной установки
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Moscow
 
+# Установка Python и системных зависимостей
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-venv \
+    python3.11-dev \
+    python3-pip \
+    wget \
+    curl \
+    unzip \
+    xvfb \
+    libnss3-dev \
+    libatk-bridge2.0-0 \
+    libdrm-dev \
+    libxkbcommon-dev \
+    libgtk-3-dev \
+    libgbm-dev \
+    libasound2-dev \
+    libxss1 \
+    libgconf-2-4 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libatk1.0-0 \
+    libcairo-gobject2 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    fonts-liberation \
+    fonts-dejavu-core \
+    fonts-freefont-ttf \
+    fonts-ubuntu \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создание символических ссылок для Python
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python3
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Создание рабочей директории
 WORKDIR /app
 
+# Копирование файлов зависимостей
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
+# Обновление pip и установка Python зависимостей
+RUN pip3 install --no-cache-dir --upgrade pip
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Установка Playwright браузеров
+RUN playwright install chromium
+RUN playwright install-deps chromium
+
+# Копирование исходного кода
 COPY . .
-
 
 # Создание директорий для данных
 RUN mkdir -p /app/output /app/logs
@@ -34,5 +83,3 @@ HEALTHCHECK --interval=30m --timeout=10s --start-period=5s --retries=3 \
 
 # Команда по умолчанию
 CMD ["python", "scheduler.py"]
-
-

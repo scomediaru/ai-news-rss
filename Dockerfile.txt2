@@ -1,47 +1,24 @@
-# Альтернативный Dockerfile на базе Ubuntu для решения проблем с зависимостями
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
-# Переменные окружения для неинтерактивной установки
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Moscow
-
-# Установка Python и системных зависимостей
+# Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
-    python3.11 \
-    python3.11-venv \
-    python3.11-dev \
-    python3-pip \
     wget \
-    curl \
+    gnupg \
     unzip \
+    curl \
     xvfb \
-    libnss3-dev \
+    libnss3 \
+    libnspr4 \
     libatk-bridge2.0-0 \
-    libdrm-dev \
-    libxkbcommon-dev \
-    libgtk-3-dev \
-    libgbm-dev \
-    libasound2-dev \
-    libxss1 \
-    libgconf-2-4 \
-    libxtst6 \
-    libxrandr2 \
-    libasound2 \
-    libpangocairo-1.0-0 \
-    libatk1.0-0 \
-    libcairo-gobject2 \
+    libdrm2 \
+    libxkbcommon0 \
     libgtk-3-0 \
-    libgdk-pixbuf2.0-0 \
+    libgbm1 \
+    libasound2 \
     fonts-liberation \
     fonts-dejavu-core \
     fonts-freefont-ttf \
-    fonts-ubuntu \
-    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-
-# Создание символических ссылок для Python
-RUN ln -sf /usr/bin/python3.11 /usr/bin/python3
-RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # Создание рабочей директории
 WORKDIR /app
@@ -49,13 +26,12 @@ WORKDIR /app
 # Копирование файлов зависимостей
 COPY requirements.txt .
 
-# Обновление pip и установка Python зависимостей
-RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install --no-cache-dir -r requirements.txt
+# Установка Python зависимостей
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Установка Playwright браузеров
+# Установка браузеров Playwright с обходом проблем зависимостей
 RUN playwright install chromium
-RUN playwright install-deps chromium
+RUN playwright install-deps chromium || true
 
 # Копирование исходного кода
 COPY . .
