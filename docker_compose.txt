@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  dzen-scraper:
+    build: .
+    container_name: dzen-news-scraper
+    restart: unless-stopped
+    environment:
+      - HEADLESS=true
+      - MAX_ARTICLES=30
+      - SAVE_FORMAT=both
+      - LOG_LEVEL=INFO
+      - MIN_DELAY=2.0
+      - MAX_DELAY=4.0
+      - ARTICLE_DELAY_MIN=3.0
+      - ARTICLE_DELAY_MAX=6.0
+    volumes:
+      - ./output:/app/output
+      - ./logs:/app/logs
+      - ./config:/app/config
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; exit(0 if os.path.exists('/app/logs/dzen_scraper.log') else 1)"]
+      interval: 30m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Опциональный веб-интерфейс для мониторинга
+  web-monitor:
+    build: 
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: dzen-scraper-web
+    restart: unless-stopped
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./output:/app/output:ro
+      - ./logs:/app/logs:ro
+    depends_on:
+      - dzen-scraper
+    profiles:
+      - web
+
+volumes:
+  scraper_data:
+  scraper_logs:
