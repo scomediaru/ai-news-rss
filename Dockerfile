@@ -20,8 +20,25 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Установка браузеров Playwright
 RUN playwright install chromium
-RUN playwright install-deps chromium
 
+RUN apt-get update && apt-get install -y \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
+    fonts-liberation \
+    fonts-dejavu-core \
+    fonts-unifont \
+    && playwright install chromium
+    
+# RUN playwright install-deps chromium
+
+RUN apt-get update && \
+    (playwright install-deps chromium || true) && \
+    playwright install chromium
+    
 # Копирование исходного кода
 COPY . .
 
