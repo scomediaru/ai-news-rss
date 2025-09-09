@@ -106,7 +106,7 @@ EOF
 # Создание docker-compose.yml
 echo "📄 Создание docker-compose.yml..."
 cat > docker-compose.yml << 'EOF'
-version: '3.8'
+
 
 services:
   dzen-scraper:
