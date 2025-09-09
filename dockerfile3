@@ -1,10 +1,8 @@
 FROM python:3.11-slim
 
-# Установка системных зависимостей
+# Установка системных зависимостей (оптимизированная версия)
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg \
-    unzip \
     curl \
     xvfb \
     libnss3 \
@@ -15,9 +13,12 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libgbm1 \
     libasound2 \
+    libxss1 \
+    libgconf-2-4 \
     fonts-liberation \
     fonts-dejavu-core \
-    fonts-freefont-ttf \
+    fonts-unifont \
+    fonts-noto-color-emoji \
     && rm -rf /var/lib/apt/lists/*
 
 # Создание рабочей директории
@@ -29,9 +30,8 @@ COPY requirements.txt .
 # Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Установка браузеров Playwright с обходом проблем зависимостей
+# Установка Chromium для Playwright
 RUN playwright install chromium
-RUN playwright install-deps chromium || true
 
 # Копирование исходного кода
 COPY . .
@@ -50,7 +50,7 @@ ENV HEADLESS=true
 ENV OUTPUT_DIR=/app/output
 ENV LOGS_DIR=/app/logs
 
-# Порт для веб-интерфейса (если добавите в будущем)
+# Порт для веб-интерфейса
 EXPOSE 8000
 
 # Проверка здоровья контейнера
