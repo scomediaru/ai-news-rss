@@ -59,30 +59,27 @@ EOF
 # Создание Dockerfile
 echo "📄 Создание Dockerfile..."
 cat > Dockerfile << 'EOF'
-FROM python:3.11-slim
 
+FROM python:3.11-slim-bookworm
+
+# Установка системных зависимостей (оптимизированная версия)
 RUN apt-get update && apt-get install -y \
-    wget \
-    curl \
-    xvfb \
-    libnss3 \
-    libnspr4 \
-    libatk-bridge2.0-0 \
-    libdrm2 \
-    libxkbcommon0 \
-    libgtk-3-0 \
-    libgbm1 \
-    libasound2 \
-    libxss1 \
-    libgconf-2-4 \
     fonts-liberation \
     fonts-dejavu-core \
     fonts-unifont \
-    fonts-noto-color-emoji \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
+# Создание рабочей директории
 WORKDIR /app
+
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 RUN playwright install chromium
 
