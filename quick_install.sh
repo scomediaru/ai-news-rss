@@ -6,7 +6,7 @@
 set -e
 
 PROJECT_DIR="dzen-news-scraper"
-GITHUB_RAW_URL="https://raw.githubusercontent.com/your-username/dzen-news-scraper/main"
+GITHUB_RAW_URL="https://raw.githubusercontent.com/scomediaru/ai-news-rss/main"
 
 echo "🚀 Быстрая установка Dzen News Scraper"
 echo "========================================"
