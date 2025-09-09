@@ -62,14 +62,30 @@ cat > Dockerfile << 'EOF'
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y \
-    wget gnupg unzip curl xvfb \
+    wget \
+    curl \
+    xvfb \
+    libnss3 \
+    libnspr4 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxkbcommon0 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
+    libxss1 \
+    libgconf-2-4 \
+    fonts-liberation \
+    fonts-dejavu-core \
+    fonts-unifont \
+    fonts-noto-color-emoji \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN playwright install chromium
-RUN playwright install-deps chromium
+
 
 COPY . .
 RUN mkdir -p /app/output /app/logs
